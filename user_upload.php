@@ -18,6 +18,9 @@ $options = getopt($shortopts, $longopts);
 if (count($options) > 1 && !isset($options["dry_run"])) {
     echo "Too many arguments";
     exit();
+} elseif (count($options) == 0) {
+    echo "No arguments";
+    exit();
 } elseif (isset($options["dry_run"]) && !isset($options["file"])) {
     echo "Dry run requires a file";
     exit();
@@ -52,7 +55,7 @@ elseif (isset($options["u"]) ) {
     --file 'csv file name' (use double quotes) - this is the name of the CSV to be parsed and will also insert the values into the DB \n
     --create_table - this will cause the MySQL users table to be built (and no further
     action will be taken)\n
-    --dry_run - this will be used with the --file directive in case we want to run the script but not \n
+    --dry_run - this will be used with the --file directive in case we want to run the script but not
     insert into the DB. All other functions will be executed, but the database won't be altered \n
     -u - Displays MySQL username \n
     -p - Displays MySQL password \n
@@ -144,8 +147,15 @@ while (($data = fgetcsv($file)) !== FALSE)
       $firstnameDB = $firstname;
       $lastnameDB = $surname;
       $emailDB = $email;
-      $stmt->execute();
-      $rows_valid++;
+      $result = $stmt->execute();
+      if ($result === TRUE) {
+        echo $email . "New record created successfully\n";
+        $rows_valid++;
+      } else {
+        echo "Error: " . $stmt->error . "\n";
+        $rows_invalid++;
+      }
+     // $rows_valid++;
     }
 }
     //echo $data[0] . $data[1] . $data[2];
@@ -193,8 +203,7 @@ while (($data = fgetcsv($file)) !== FALSE)
     $row++;
 }
 echo "There were " . $invalid_rows . " invalid rows\n";
-$stmt->close();
-$conn->close();
+
 }
 
 // // Prepare MySQL Statement
