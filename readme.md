@@ -3,7 +3,7 @@ Set up in your connection.php using the example provided to run the program.
 
 You can use the following commands 
 ``` You can use the following commands to run the script: \n
-    --file [csv file name] - this is the name of the CSV to be parsed and will also insert the values into the DB \n
+    --file "csv file name" - this is the name of the CSV to be parsed and will also insert the values into the DB \n
     --create_table - this will cause the MySQL users table to be built (and no further
     action will be taken)\n
     --dry_run - this will be used with the --file directive in case we want to run the script but not \n
