@@ -1,4 +1,5 @@
 <?php 
+// Include the database connection file
 include('connection.php');
 
 // check for arguments
@@ -15,6 +16,7 @@ $longopts  = array(
 );
 $options = getopt($shortopts, $longopts);
 
+// Command line inputs
 if (count($options) > 1 && !isset($options["dry_run"])) {
     echo "Too many arguments";
     exit();
@@ -52,7 +54,7 @@ elseif (isset($options["u"]) ) {
     exit();
 } elseif (isset($options["help"])) {
     echo "You can use the following commands to run the script: \n
-    --file 'csv file name' (use double quotes) - this is the name of the CSV to be parsed and will also insert the values into the DB \n
+    --file 'filename.csv' (use double quotes) - this is the name of the CSV to be parsed and will also insert the values into the DB \n
     --create_table - this will cause the MySQL users table to be built (and no further
     action will be taken)\n
     --dry_run - this will be used with the --file directive in case we want to run the script but not
@@ -121,10 +123,10 @@ $rows_invalid = 0;
 $rows_valid = 0;
 while (($data = fgetcsv($file)) !== FALSE)
 {
-    //$charecters = "\n\r\t\v\x00";
+    
    if ($row !== 1) {
     $email = str_replace(" ", "", $data[2]);
-    // trim($data[2], "\n\r\t\v\x00");
+  
     if (!Filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo $email . " is an invalid email address\nrecord will not be inserted\n";
         $rows_invalid++;            
@@ -161,7 +163,7 @@ while (($data = fgetcsv($file)) !== FALSE)
     //echo $data[0] . $data[1] . $data[2];
     $row++;
 }
-echo $rows_valid . " Inserted into users \n" . $rows_invalid . " Not inserted due to invalid data type \n";
+echo $rows_valid . " Inserted into users \n" . $rows_invalid . " Not inserted due to invalid data or duplication \n";
 $stmt->close();
 $conn->close();
 }
@@ -174,10 +176,10 @@ $row = 1;
 $invalid_rows = 0;
 while (($data = fgetcsv($file)) !== FALSE)
 {
-    //$charecters = "\n\r\t\v\x00";
+
    if ($row !== 1) {
     $email = str_replace(" ", "", $data[2]);
-    // trim($data[2], "\n\r\t\v\x00");
+
     if (!Filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo $email . " is an invalid email address\n";
          $invalid_rows++;           
@@ -199,54 +201,9 @@ while (($data = fgetcsv($file)) !== FALSE)
       
     }
 }
-    //echo $data[0] . $data[1] . $data[2];
     $row++;
 }
 echo "There were " . $invalid_rows . " invalid rows\n";
 
 }
 
-// // Prepare MySQL Statement
-// $stmt = $conn->prepare('INSERT INTO users (firstname, surname, email) VALUES (?,?,?)');
-// $stmt->bind_param('sss', $firstnameDB, $lastnameDB, $emailDB);
-
-// // iterate through CSV 
-// $file = fopen($filename,"r");
-// $row = 1;
-
-// while (($data = fgetcsv($file)) !== FALSE)
-// {
-//     //$charecters = "\n\r\t\v\x00";
-//    if ($row !== 1) {
-//     $email = str_replace(" ", "", $data[2]);
-//     // trim($data[2], "\n\r\t\v\x00");
-//     if (!Filter_var($email, FILTER_VALIDATE_EMAIL)) {
-//         echo $email . " is an invalid email address\nrecord will not be inserted\n";
-                    
-//     } else {
-//       echo $email . " email valid\n";
-//       //Remove space and convert to Capitalised 
-//       $firstname = str_replace(" ", "", $data[0]);
-//       $firstname =  preg_replace("/[^A-Za-z]/", '', $firstname);
-//       $firstname = ucwords(strtolower($firstname));
-//       echo $firstname . "i \n"; 
-
-//       $surname = str_replace(" ", "", $data[1]);
-//       $surname =  preg_replace("/[^A-Za-z]/", '', $surname);
-//       $surname = ucwords(strtolower($surname));
-//       echo $surname . "i \n"; 
-      
-//       //lowercase email
-//       $email = strtolower($email);
-      
-//       $firstnameDB = $firstname;
-//       $lastnameDB = $surname;
-//       $emailDB = $email;
-//       $stmt->execute();
-//     }
-// }
-//     //echo $data[0] . $data[1] . $data[2];
-//     $row++;
-// }
-// $stmt->close();
-// $conn->close();
