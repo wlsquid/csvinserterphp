@@ -1,8 +1,5 @@
 <?php 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "csvinserter";
+include('connection.php');
 
 // check for arguments
 $shortopts  = "";
@@ -17,7 +14,7 @@ $longopts  = array(
     "create_table",           // No value
 );
 $options = getopt($shortopts, $longopts);
-var_dump($options);
+
 if (count($options) > 1 && !isset($options["dry_run"])) {
     echo "Too many arguments";
     exit();
@@ -66,7 +63,7 @@ elseif (isset($options["u"]) ) {
 }
 
 
-
+// Returns a connection to the MySQL database
 function dbConnect($servername, $username, $password, $dbname) {
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -81,7 +78,7 @@ function dbConnect($servername, $username, $password, $dbname) {
 }
 
 
-
+// Creates the users table
 function createTable($conn) {
 
 $exists = $conn->query("SELECT 1 from users LIMIT 1");
@@ -108,6 +105,7 @@ if ($conn->query($sql) ===  TRUE) {
 }
 }
 
+// Inserts values from the CSV into the DB
 function dbInsert($conn, $filename) {
       // Prepare MySQL Statement
 $stmt = $conn->prepare('INSERT INTO users (firstname, surname, email) VALUES (?,?,?)');
@@ -158,6 +156,7 @@ $stmt->close();
 $conn->close();
 }
 
+// Prints out the contents of the CSV file and checks for invalid emails
 function dryRun($filename) {
     // iterate through CSV 
 $file = fopen($filename,"r");
