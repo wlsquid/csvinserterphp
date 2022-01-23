@@ -21,7 +21,7 @@ if (count($options) > 1 && !isset($options["dry_run"])) {
     echo "Too many arguments";
     exit();
 } elseif (count($options) == 0) {
-    echo "No arguments";
+    echo "No valid arguments";
     exit();
 } elseif (isset($options["dry_run"]) && !isset($options["file"])) {
     echo "Dry run requires a file";
