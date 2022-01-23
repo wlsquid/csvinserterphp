@@ -6,27 +6,35 @@ $password = "";
 $dbname = "csvinserter";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
-echo "Connected successfully";
+echo "Connected successfully\n";
+
+$exists = $conn->query("SELECT 1 from users LIMIT 1");
+
+if ($exists === FALSE) {
 
 $sql = "CREATE TABLE users (
-    id INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id INT(4) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     firstname VARCHAR(100) NOT NULL,
     surename VARCHAR(100) NOT NULL,
-    email VARCHAR(320) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
     reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )";
 
 if ($conn->query($sql) ===  TRUE) {
-    echo "Table users was created";
+    echo "Table 'users' was created\n";
 } else {
     echo "Error creating table: " . $conn->error;
     exit();
+} 
+
+} else {
+    echo "users already exists\n";
 }
 
 // iterate through CSV 
@@ -34,11 +42,15 @@ $file = fopen("users.csv","r");
 
 while (($data = fgetcsv($file)) !== FALSE)
 {
-    $email = $data[2];
+    $charecters = "\n\r\t\v\x00";
+
+    $email = str_replace(" ", "", $data[2]);
+    
+    // trim($data[2], "\n\r\t\v\x00");
     if (!Filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo $email . " is an invalid email address";
+        echo $email . " is an invalid email address\n";
     } else {
-      echo "email valid";
+      echo "email valid\n";
     }
     //echo $data[0] . $data[1] . $data[2];
 }
