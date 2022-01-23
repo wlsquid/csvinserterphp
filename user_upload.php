@@ -1,9 +1,41 @@
 <?php 
-
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "csvinserter";
+
+// check for arguments
+$shortopts  = "";
+$shortopts .= "u";  // Required value
+$shortopts .= "p"; // Optional value
+$shortopts .= "h"; // These options do not accept values
+
+$longopts  = array(
+    "file:",     // Required value
+    "help",    // Optional value
+    "dry_run",        // No value
+    "create_table",           // No value
+);
+$options = getopt($shortopts, $longopts);
+var_dump($options[1]);
+if (count($options) > 1) {
+    echo "Too many arguments";
+    exit();
+} else {
+
+if ($option[0] === "u") {
+   echo "MySQL Username is " . $username;
+   exit();  
+} elseif ($option[0] === "p") {
+    echo "MySQL Password is password";
+    exit(); 
+} elseif ($option[0] === "h") {
+    echo "MySQL Username is " . $servername;
+    exit();
+}
+exit();
+}
+
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
