@@ -1,6 +1,8 @@
 # Command Line PHP CSV to DB 
 Set up in your connection.php using the example provided to run the program.
 
+In a production environment you will want to use environment variables instead
+
 You can use the following commands 
 ``` You can use the following commands to run the script: \n
     --file "csv file name" - this is the name of the CSV to be parsed and will also insert the values into the DB \n
